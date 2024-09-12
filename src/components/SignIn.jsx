@@ -7,7 +7,8 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
-import { auth } from "@/config/firebase-config";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db, auth } from "@/config/firebase-config";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -41,9 +42,30 @@ const SignIn = () => {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
 
-      console.log(result);
-      console.log("user logged in successfully");
+      const user = result.user;
+      const userDocRef = doc(db, "Users", user.uid); // Reference to the user document in Firestore
 
+      // Check if the user already exists in Firestore
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        // If user doesn't exist, create a new document
+        await setDoc(userDocRef, {
+          firstName: user.displayName.split(" ")[0], // Assuming the first word is the first name
+          lastName: user.displayName.split(" ")[1] || "", // Assuming the second word is the last name (may be empty)
+          email: user.email,
+          uid: user.uid,
+          password: "", // Google users won't have a password, so leave this empty
+          branch: "IT",
+          semester: "Semester 5",
+        });
+
+        console.log("New user added to Firestore during sign-in.");
+      } else {
+        console.log("User already exists in Firestore.");
+      }
+
+      // Redirect to the dashboard after successful sign-in
       navigate("/dashboard");
     } catch (error) {
       console.log(error);
@@ -132,8 +154,12 @@ const SignIn = () => {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <span className="text-sm text-gray-500">OR</span>
+          <div className="w-[400px] h-full mt-6 flex flex-col justify-center items-center  text-center">
+            <div className="flex justify-center items-center gap-[12px]">
+              <img className="w-[180px]" src="src/assets/line.svg" />
+              <span className="text-[11px] text-gray-500">OR</span>
+              <img className="w-[180px]" src="src/assets/line.svg" />
+            </div>
           </div>
 
           <button
