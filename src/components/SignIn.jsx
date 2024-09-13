@@ -97,7 +97,7 @@ const SignIn = () => {
       <div className="relative grid grid-cols-2 items-center justify-center h-[calc(100vh-64px)]">
         <div className="relative aspect-[2/1] w-full">
           <img
-            src="src\assets\girl.png"
+            src="/girl.png"
             alt="Woman working on laptop"
             className="absolute  h-100% object-cover "
           />
@@ -156,9 +156,9 @@ const SignIn = () => {
 
           <div className="w-[400px] h-full mt-6 flex flex-col justify-center items-center  text-center">
             <div className="flex justify-center items-center gap-[12px]">
-              <img className="w-[180px]" src="src/assets/line.svg" />
+              <img className="w-[180px]" src="/line.svg" />
               <span className="text-[11px] text-gray-500">OR</span>
-              <img className="w-[180px]" src="src/assets/line.svg" />
+              <img className="w-[180px]" src="/line.svg" />
             </div>
           </div>
 
@@ -166,11 +166,7 @@ const SignIn = () => {
             onClick={handleSigninwithgoogle}
             className="w-[400px] mt-6 border-[1.5px] border-black text-black py-3 px-4 rounded-full hover:bg-gray-50 transition duration-300 flex items-center justify-center"
           >
-            <img
-              src="src\assets\google.svg"
-              alt="Google logo"
-              className="mr-2 h-5 w-5"
-            />
+            <img src="/google.svg" alt="Google logo" className="mr-2 h-5 w-5" />
             Sign In with Google
           </button>
         </div>

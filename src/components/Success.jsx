@@ -6,11 +6,7 @@ const Success = () => {
     <>
       <Navbar />
       <div className="flex items-center justify-center min-h-[calc(100vh_-_80px)] flex-col bg-gray-100">
-        <img
-          src="src\assets\tick.webp"
-          alt="Success Tick"
-          className="w-24 h-24 mb-4"
-        />
+        <img src="/tick.webp" alt="Success Tick" className="w-24 h-24 mb-4" />
         <h1 className="text-xl font-semibold text-gray-800">
           Your response has been successfully submitted!
         </h1>

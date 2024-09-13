@@ -1,21 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "./dropdown";
+import { auth } from "../config/firebase-config"; // Assuming your firebase config file
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar"; // Assuming you have avatar UI component
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "./ui/dialog";
 
 const Navbar = () => {
+  const [user, setUser] = useState(null);
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Track user's authentication state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup the subscription on unmount
+    return () => unsubscribe();
+  }, []);
 
   const handleSignin = () => {
     navigate("/signin");
   };
 
-  const handleAboutClick = () => {
-    navigate("/about");
-  };
-
-  const handleContactClick = () => {
-    navigate("/contact");
+  const handleSignout = () => {
+    signOut(auth)
+      .then(() => {
+        setUser(null);
+        navigate("/signin");
+      })
+      .catch((error) => {
+        console.error("Sign out error", error);
+      });
   };
 
   const handleHomeClick = () => {
@@ -29,21 +60,81 @@ const Navbar = () => {
         <h1
           onClick={handleHomeClick}
           id="logo"
-          className=" uppercase text-base font-bold leading-6 tracking-[5%] text-black cursor-pointer;"
+          className="uppercase text-base font-bold leading-6 tracking-[5%] text-black cursor-pointer"
         >
           Svadhyaya
         </h1>
         <div className="flex gap-9">
-          <a onClick={handleAboutClick} className="cursor-pointer">
+          {user ? (
+            <a
+              onClick={() => navigate("/dashboard")}
+              className="cursor-pointer"
+            >
+              Dashboard
+            </a>
+          ) : (
+            ""
+          )}
+          <a onClick={() => navigate("/about")} className="cursor-pointer">
             About
           </a>
-          <a onClick={handleContactClick} className="cursor-pointer">
+          <a onClick={() => navigate("/contact")} className="cursor-pointer">
             Contact Us
           </a>
           <Dropdown />
         </div>
       </div>
-      <Button onClick={handleSignin}>Sign In</Button>
+      {/* Show Sign In button if not signed in, otherwise show profile */}
+      {user ? (
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Avatar className="cursor-pointer w-8 h-8">
+              <AvatarImage src={user.photoURL || "src/assets/girl.png"} />
+              <AvatarFallback>
+                {user.displayName ? user.displayName[0] : "CN"}
+              </AvatarFallback>
+            </Avatar>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Edit profile</DialogTitle>
+              <DialogDescription>
+                Make changes to your profile here.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Email
+                </label>
+                <input
+                  type="text"
+                  className="w-full py-2 border-b border-gray-300 focus:outline-none bg-white cursor-not-allowed"
+                  value={user.email}
+                  disabled
+                />
+              </div>
+              {/* Additional profile fields */}
+            </div>
+            <DialogFooter>
+              <Button
+                className="bg-green-600 hover:bg-green-700"
+                onClick={() => console.log("Profile updated!")}
+              >
+                Save
+              </Button>
+              <Button
+                className="bg-red-600 hover:bg-red-700"
+                onClick={handleSignout}
+              >
+                Sign Out
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      ) : (
+        <Button onClick={handleSignin}>Sign In</Button>
+      )}
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { CircularProgressbar } from "react-circular-progressbar";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,9 +15,8 @@ import { useNavigate } from "react-router-dom";
 import { db, auth } from "@/config/firebase-config";
 import DashboardSubjects from "./DashboardSubjects";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
-import { QuizDifficulty } from "./QuizDifficulty";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
+import GeminiQuiz from "./GeminiQuiz";
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -73,6 +71,11 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
+  const handleHomeClick = () => {
+    navigate("/");
+    document.getElementById("logo");
+  };
+
   const handleSignout = async (e) => {
     e.preventDefault();
     try {
@@ -80,6 +83,17 @@ const Dashboard = () => {
       navigate("/");
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const getGreeting = () => {
+    const currentHour = new Date().getHours();
+    if (currentHour < 12) {
+      return "Good Morning";
+    } else if (currentHour < 18) {
+      return "Good Afternoon";
+    } else {
+      return "Good Evening";
     }
   };
 
@@ -104,33 +118,44 @@ const Dashboard = () => {
   return (
     <div className="flex h-screen bg-[#F7F7F7]">
       {/* Sidebar */}
-      <div className="w-64 bg-[#F7F7F7] p-6 flex flex-col justify-between">
+      <div className="w-80 bg-[#F7F7F7] flex flex-col justify-between">
         <div>
-          <div className="flex items-center mb-8">
-            <div className="w-8 h-8 bg-purple-600 rounded-full mr-2"></div>
+          <div
+            className="flex items-center pt-6 pl-6 mb-10 cursor-pointer"
+            onClick={handleHomeClick}
+          >
+            <div className="w-6 h-6 bg-purple-600 rounded-full mr-2"></div>
             <span className="text-lg font-semibold">Svadhyaya</span>
           </div>
-          <h2 className="text-2xl font-bold mb-4">
-            Hello, <br /> {userData.firstName} {userData.lastName}
+          <h2 className="text-2xl pl-6 font-semibold mb-10">
+            {getGreeting()} <br /> {userData.firstName}
           </h2>
-          <DashboardSubjects semester="Sem5" />
-          <h3 className="text-sm text-gray-500 mb-2">MORE</h3>
-          <ul className="space-y-2">
-            <li className="flex items-center justify-between">
+          <DashboardSubjects semester="SEM V" />
+          <h3 className="text-xs text-black font-semibold opacity-40 pl-6 mb-3">
+            MORE
+          </h3>
+          <ul className="px-3">
+            <li
+              onClick={() => navigate("/about")}
+              className="p-3 flex items-center justify-between cursor-pointer"
+            >
               About
-              <ArrowUpRight size={16} />
+              <img src="/arrow-top-right.svg" alt="arrow" />
             </li>
-            <li className="flex items-center justify-between">
+            <li
+              onClick={() => navigate("/contact")}
+              className="p-3 flex items-center justify-between cursor-pointer"
+            >
               Contact
-              <ArrowUpRight size={16} />
+              <img src="\arrow-top-right.svg" alt="arrow" />
             </li>
           </ul>
         </div>
-        <div>
+        <div className="h-16 px-6 py-4 flex justify-between items-center border-t">
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Avatar className="cursor-pointer">
-                <AvatarImage src="https://github.com/shadcn.png" />
+              <Avatar className="cursor-pointer w-8 h-8">
+                <AvatarImage src="/girl.png" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </DialogTrigger>
@@ -229,57 +254,91 @@ const Dashboard = () => {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+          <p className="text-xs font-normal text-black opacity-50">
+            © 2024 Svadhaya
+          </p>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 my-2 mr-2 bg-white rounded-lg">
-        <h1 className="text-3xl font-bold mb-2">Web Technology</h1>
-        <p className="text-gray-600 mb-6">
-          Web Technology is a multifaceted field that encompasses the
-          principles, tools, and techniques used in creating, maintaining, and
-          optimizing web-based systems. It's a rapidly evolving domain that
-          forms the backbone of our digital world, powering everything from
-          simple websites to complex web applications.
-        </p>
-        <h2 className="text-xl font-semibold mb-4">COMPLETED</h2>
-        <div className="space-y-4 mb-8">
-          <div className="bg-white p-4 rounded-lg shadow flex items-center justify-between">
-            <div>
-              <h3 className="font-semibold">Quiz I</h3>
-              <p className="text-sm text-gray-500">
-                20 Questions · 18 Correct Answers
-              </p>
-            </div>
-            <div className="w-12 h-12">
-              <CircularProgressbar value={89} text={`89%`} />
-            </div>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow flex items-center justify-between">
-            <div>
-              <h3 className="font-semibold">Quiz II</h3>
-              <p className="text-sm text-gray-500">
-                20 Questions · 13 Correct Answers
-              </p>
-            </div>
-            <div className="w-12 h-12">
-              <CircularProgressbar value={65} text={`65%`} />
-            </div>
-          </div>
-        </div>
-        <h2 className="text-xl font-semibold mb-4">PENDING</h2>
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded-lg shadow flex items-center justify-between">
-            <div>
-              <h3 className="font-semibold">Quiz III</h3>
-              <div className="flex gap-20">
-                <QuizDifficulty />
+      <div className="flex-1 pt-10 pb-8 my-2 mr-2 bg-white rounded-lg">
+        <div className="max-w-[760px] w-full mx-auto">
+          <h1 className="text-2xl font-semibold mb-5">Web Technology</h1>
+          <p className="text-black opacity-50 text-[17px] font-medium leading-[150%] mb-10">
+            Web Technology is a multifaceted field that encompasses the
+            principles, tools, and techniques used in creating, maintaining, and
+            optimizing web-based systems. It's a rapidly evolving domain that
+            forms the backbone of our digital world, powering everything from
+            simple websites to complex web applications.
+          </p>
+          <h2 className="text-black opacity-50 text-xs tracking-wider font-semibold mb-5">
+            COMPLETED
+          </h2>
+          <div className="space-y-5 mb-10">
+            <div className="bg-[#F7F7F7] p-5 rounded-lg flex items-center justify-between">
+              <div>
+                <h3 className="font-medium">Quiz I</h3>
+                <p className="text-base font-medium text-black opacity-50">
+                  20 Questions · 18 Correct Answers
+                </p>
+              </div>
+              <div className="w-12 h-12">
+                <CircularProgressbar
+                  styles={{
+                    path: {
+                      // Path color
+                      stroke: `rgb(25, 144, 66)`,
+                    },
+                    text: {
+                      // Text color
+                      fill: "#199042",
+                      // Text size
+                      fontSize: "32px",
+                      fontWeight: 600,
+                    },
+                  }}
+                  strokeWidth={12}
+                  value={85}
+                  text={`89`}
+                />
               </div>
             </div>
-            <button className="px-4 py-2 bg-gray-200 rounded-md">
-              START TEST
-            </button>
+            <div className="bg-[#F7F7F7] p-5 rounded-lg flex items-center justify-between">
+              <div>
+                <h3 className="font-medium">Quiz II</h3>
+                <p className="text-base font-medium text-black opacity-50">
+                  20 Questions · 13 Correct Answers
+                </p>
+              </div>
+              <div className="w-12 h-12">
+                <CircularProgressbar
+                  styles={{
+                    path: {
+                      // Path color
+                      stroke: `rgb(106,144,25)`,
+                    },
+                    text: {
+                      // Text color
+                      fill: "#6A9019",
+                      // Text size
+                      fontSize: "32px",
+                      fontWeight: 600,
+                    },
+                  }}
+                  strokeWidth={12}
+                  value={65}
+                  text={`65`}
+                />
+              </div>
+            </div>
           </div>
+          <h2 className="text-black opacity-50 text-xs tracking-wider font-semibold mb-5">
+            NEW QUIZ
+          </h2>
+          <GeminiQuiz
+            subject="Internet Programming"
+            subjectDescription="Internet programming involves developing software and applications that operate over the web. Our syllabus covers basics of html, css, javascript, ReactJs, NodeJs, etc."
+          />
         </div>
       </div>
     </div>

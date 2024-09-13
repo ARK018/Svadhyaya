@@ -46,7 +46,7 @@ const Step2 = ({
       <div className="relative grid grid-cols-2 items-center justify-center h-[calc(100vh-64px)]">
         <div className="relative aspect-[2/1] w-full">
           <img
-            src="src\assets\girl.png"
+            src="/girl.png"
             alt="Woman working on laptop"
             className="absolute  h-100% object-cover "
           />
@@ -110,7 +110,7 @@ const Step2 = ({
               className="border-[1.5px] w-full border-black text-black py-3 px-4 rounded-full hover:bg-gray-50 transition duration-300 flex items-center justify-center"
             >
               <img
-                src="src\assets\google.svg"
+                src="/google.svg"
                 alt="Google logo"
                 className="mr-2 h-5 w-5"
               />
