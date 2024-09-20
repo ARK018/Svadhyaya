@@ -12,13 +12,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
-import { db, auth } from "@/config/firebase-config";
-import DashboardSubjects from "./DashboardSubjects";
-import { getDoc, doc, updateDoc } from "firebase/firestore";
+import { db, auth } from "../config/firebase-config";
+import {
+  getDocs,
+  getDoc,
+  doc,
+  updateDoc,
+  collection,
+} from "firebase/firestore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import GeminiQuiz from "./GeminiQuiz";
+import QuizList from "./QuizList";
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
+  const [selectedSubject, setSelectedSubject] = useState(null);
   const [open, setOpen] = useState(false);
   const [userData, setUserData] = useState({
     firstName: "",
@@ -34,6 +41,7 @@ const Dashboard = () => {
     semester: "",
     branch: "",
   });
+  const [subjectData, setSubjectData] = useState([]);
 
   const fetchUserData = async () => {
     const user = auth.currentUser;
@@ -65,9 +73,33 @@ const Dashboard = () => {
     setLoading(false);
   };
 
+  const fetchSubject = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "Subjects"));
+      const subjectsList = querySnapshot.docs.map((doc) => ({
+        id: doc.id, // Document ID (IP, SE, etc.)
+        title: doc.data().title,
+        description: doc.data().description,
+      }));
+      setSubjectData(subjectsList);
+
+      // Set the first subject as selected by default
+      if (subjectsList.length > 0) {
+        setSelectedSubject(subjectsList[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching subjects:", error);
+    }
+  };
+
   useEffect(() => {
     fetchUserData();
+    fetchSubject();
   }, []);
+
+  const handleClick = (subject) => {
+    setSelectedSubject(subject);
+  };
 
   const navigate = useNavigate();
 
@@ -130,7 +162,26 @@ const Dashboard = () => {
           <h2 className="text-2xl pl-6 font-semibold mb-10">
             {getGreeting()} <br /> {userData.firstName}
           </h2>
-          <DashboardSubjects semester="SEM V" />
+          <div>
+            <h3 className="text-xs text-black font-semibold opacity-40 pl-6 mb-3">
+              SUBJECTS FOR SEM V
+            </h3>
+            <ul className="mb-[42px] px-3">
+              {subjectData.map((subject) => (
+                <li
+                  onClick={() => handleClick(subject)}
+                  className={`cursor-pointer p-3 rounded-lg h-[48px] flex items-center ${
+                    selectedSubject === subject ? "bg-white" : ""
+                  }`}
+                  key={subject.id}
+                  role="button" // Optional for accessibility if list items are clickable
+                >
+                  {subject.title}
+                </li>
+              ))}
+            </ul>
+          </div>
+
           <h3 className="text-xs text-black font-semibold opacity-40 pl-6 mb-3">
             MORE
           </h3>
@@ -263,82 +314,32 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="flex-1 pt-10 pb-8 my-2 mr-2 bg-white rounded-lg">
         <div className="max-w-[760px] w-full mx-auto">
-          <h1 className="text-2xl font-semibold mb-5">Web Technology</h1>
-          <p className="text-black opacity-50 text-[17px] font-medium leading-[150%] mb-10">
-            Web Technology is a multifaceted field that encompasses the
-            principles, tools, and techniques used in creating, maintaining, and
-            optimizing web-based systems. It's a rapidly evolving domain that
-            forms the backbone of our digital world, powering everything from
-            simple websites to complex web applications.
-          </p>
+          {selectedSubject && (
+            <div>
+              <h1 className="text-2xl font-semibold mb-5">
+                {selectedSubject.title}
+              </h1>
+              <p className="text-black opacity-50 text-[17px] font-medium leading-[150%] mb-10">
+                {selectedSubject.description}
+              </p>
+            </div>
+          )}
           <h2 className="text-black opacity-50 text-xs tracking-wider font-semibold mb-5">
             COMPLETED
           </h2>
           <div className="space-y-5 mb-10">
-            <div className="bg-[#F7F7F7] p-5 rounded-lg flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Quiz I</h3>
-                <p className="text-base font-medium text-black opacity-50">
-                  20 Questions · 18 Correct Answers
-                </p>
-              </div>
-              <div className="w-12 h-12">
-                <CircularProgressbar
-                  styles={{
-                    path: {
-                      // Path color
-                      stroke: `rgb(25, 144, 66)`,
-                    },
-                    text: {
-                      // Text color
-                      fill: "#199042",
-                      // Text size
-                      fontSize: "32px",
-                      fontWeight: 600,
-                    },
-                  }}
-                  strokeWidth={12}
-                  value={85}
-                  text={`89`}
-                />
-              </div>
-            </div>
-            <div className="bg-[#F7F7F7] p-5 rounded-lg flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Quiz II</h3>
-                <p className="text-base font-medium text-black opacity-50">
-                  20 Questions · 13 Correct Answers
-                </p>
-              </div>
-              <div className="w-12 h-12">
-                <CircularProgressbar
-                  styles={{
-                    path: {
-                      // Path color
-                      stroke: `rgb(106,144,25)`,
-                    },
-                    text: {
-                      // Text color
-                      fill: "#6A9019",
-                      // Text size
-                      fontSize: "32px",
-                      fontWeight: 600,
-                    },
-                  }}
-                  strokeWidth={12}
-                  value={65}
-                  text={`65`}
-                />
-              </div>
-            </div>
+            {selectedSubject && <QuizList subject={selectedSubject.title} />}
           </div>
           <h2 className="text-black opacity-50 text-xs tracking-wider font-semibold mb-5">
             NEW QUIZ
           </h2>
-          <GeminiQuiz
-            subject="Internet Programming"
-            subjectDescription="Internet programming involves developing software and applications that operate over the web. Our syllabus covers basics of html, css, javascript, ReactJs, NodeJs, etc."
-          />
+          {selectedSubject && (
+            <GeminiQuiz
+              subject={selectedSubject.title}
+              subjectDescription={selectedSubject.description}
+              subjectSyllabus={selectedSubject.syllabus}
+            />
+          )}
         </div>
       </div>
     </div>

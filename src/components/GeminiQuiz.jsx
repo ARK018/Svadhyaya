@@ -7,7 +7,7 @@ const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-function GeminiQuiz({ subject, subjectDescription }) {
+function GeminiQuiz({ subject, subjectDescription, subjectSyllabus }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -15,10 +15,11 @@ function GeminiQuiz({ subject, subjectDescription }) {
     setLoading(true);
     const prompt = `Generate a JSON object for a multiple-choice quiz about ${subject}.
     Subject description: ${subjectDescription}
+    Subject syllanus: ${subjectSyllabus}
     Number of questions: ${questions}
     Difficulty: ${difficulty}
    
-    The JSON should have this structure with only 4 options not more than that nor less:
+    The JSON should have this structure with exactly 4 options, each with of maximum of 30 characters :
     {
       "questions": [
         {
@@ -57,7 +58,7 @@ function GeminiQuiz({ subject, subjectDescription }) {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
       </div>
     );
   }

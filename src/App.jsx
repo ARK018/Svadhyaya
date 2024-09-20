@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { Navigate } from "react-router-dom";
 import Quiz from "./components/Quiz.jsx";
+import Result from "./components/Result.jsx";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -50,6 +51,10 @@ function App() {
             <Route
               path="/quiz"
               element={user ? <Quiz /> : <Navigate to="/signin" />}
+            />
+            <Route
+              path="/result"
+              element={user ? <Result /> : <Navigate to="/signin" />}
             />
           </Routes>
         </Router>

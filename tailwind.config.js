@@ -17,6 +17,9 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["Inter", "system-ui"],
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

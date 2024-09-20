@@ -16,11 +16,14 @@ function QuizSettings({ onStartQuiz }) {
     // Set time based on selected number of questions
     let timeLimit = "";
     switch (selectedQuestions) {
-      case "5":
+      case "05":
+        timeLimit = "05 minutes";
+        break;
+      case "10":
         timeLimit = "10 minutes";
         break;
-      case "15":
-        timeLimit = "30 minutes";
+      case "20":
+        timeLimit = "20 minutes";
         break;
       default:
         timeLimit = "";
@@ -45,7 +48,7 @@ function QuizSettings({ onStartQuiz }) {
     <div className="bg-white p-4 rounded-lg shadow-custom-combined flex items-center justify-between">
       <div className="w-full flex justify-between items-center">
         <div className="">
-          <h3 className="font-semibold">Quiz III</h3>
+          <h3 className="font-semibold">Quiz</h3>
           <div className="flex justify-between gap-12">
             <div className="flex gap-12">
               <div>
@@ -74,8 +77,9 @@ function QuizSettings({ onStartQuiz }) {
                   <option value="" disabled>
                     No. of Questions
                   </option>
-                  <option value="5">5 Questions</option>
-                  <option value="15">15 Questions</option>
+                  <option value="05">05 Questions</option>
+                  <option value="10">10 Questions</option>
+                  <option value="20">20 Questions</option>
                   {/* Add more options if needed */}
                 </select>
               </div>
@@ -85,7 +89,7 @@ function QuizSettings({ onStartQuiz }) {
         </div>
         <button
           onClick={handleStartQuiz}
-          className="text-xs font-semibold tracking-wider w-[110px] h-8 px-4 py-2 bg-black text-white rounded-full"
+          className="text-xs font-semibold tracking-wider w-fit h-8 px-4 py-2 bg-black text-white rounded-full"
         >
           START TEST
         </button>

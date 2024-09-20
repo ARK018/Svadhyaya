@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 
 export default function QuizQuestion({
   question,
@@ -30,9 +31,19 @@ export default function QuizQuestion({
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    // Load selected option from local storage when component mounts
+    const storedAnswer = localStorage.getItem(`question_${currentQuestion}`);
+    if (storedAnswer !== null) {
+      setSelectedOption(parseInt(storedAnswer, 10));
+    }
+  }, [currentQuestion]);
+
   const handleOptionSelect = (index) => {
     setSelectedOption(index);
     onAnswer(currentQuestion, index);
+    // Save the selected option to local storage
+    localStorage.setItem(`question_${currentQuestion}`, index);
   };
 
   const handleNextClick = () => {
@@ -48,60 +59,90 @@ export default function QuizQuestion({
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl">
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex justify-between items-center mb-2">
-            <span className="font-semibold text-gray-700">
-              {`Question ${currentQuestion + 1} of ${totalQuestions}`}
-            </span>
-            <button className="text-gray-500 hover:text-gray-700">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-          <div className="flex justify-between items-center text-sm text-gray-500">
-            <span>4:19</span>
-            <div className="w-full mx-4 h-2 bg-gray-200 rounded-full">
-              <div
-                className="h-full bg-green-500 rounded-full transition-all duration-1000 ease-linear"
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-            <span>15:00</span>
-          </div>
+    <div className="bg-white rounded-lg shadow-lg w-full h-[100vh]">
+      <div className="p-4 border-b border-gray-200">
+        <div className="flex justify-between items-center mb-2">
+          <span className="font-semibold text-gray-700">
+            {`Question ${currentQuestion + 1} of ${totalQuestions}`}
+          </span>
+          <button className="text-gray-500 hover:text-gray-700">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
-        <div className="p-6">
+        <div className="flex justify-between items-center text-sm text-gray-500">
+          <span>4:19</span>
+          <div className="w-full mx-4 h-2 bg-gray-200 rounded-full">
+            <div
+              className="h-full bg-green-500 rounded-full transition-all duration-1000 ease-linear"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+          <span>15:00</span>
+        </div>
+      </div>
+      <div className="flex flex-col items-center justify-center h-[calc(100vh-84.4px)]">
+        <div className="w-[760px]">
           <h2 className="text-xl font-semibold text-gray-800 mb-6">
             {question.question}
           </h2>
-          <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-5">
             {question.options.map((option, index) => (
               <button
                 key={index}
-                className={`w-full text-left p-4 rounded-lg border ${
+                className={`w-full flex items-center justify-center h-14 text-left bg-[#f7f7f7] p-4 rounded-lg border ${
                   selectedOption === index
-                    ? "border-black bg-black text-white"
-                    : "border-gray-300 hover:border-gray-400"
+                    ? "border-black text-black"
+                    : "hover:border-black"
                 }`}
                 onClick={() => handleOptionSelect(index)}
               >
-                {option}
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mr-2 flex-shrink-0"
+                >
+                  {selectedOption === index ? (
+                    <circle
+                      cx="8"
+                      cy="8"
+                      r="5.5"
+                      stroke="currentColor"
+                      strokeWidth="5"
+                    />
+                  ) : (
+                    <circle
+                      cx="8"
+                      cy="8"
+                      r="6.5"
+                      stroke="currentColor"
+                      strokeOpacity="0.2"
+                      strokeWidth="3"
+                    />
+                  )}
+                </svg>
+                <span className="text-[17px] leading-6 flex-grow">
+                  {option}
+                </span>
               </button>
             ))}
           </div>
+
           <div className="flex justify-between mt-8">
             <button
               className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"

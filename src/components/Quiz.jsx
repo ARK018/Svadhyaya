@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import QuizQuestion from "./QuizQuestion";
-import QuizResults from "./QuizResults";
+import QuizResult from "./QuizResult";
 
 function Quiz() {
   const location = useLocation();
@@ -46,24 +46,26 @@ function Quiz() {
   }
 
   if (quizComplete) {
-    return <QuizResults quizData={quizData} userAnswers={userAnswers} />;
+    return (
+      <QuizResult
+        quizData={quizData}
+        userAnswers={userAnswers}
+        subject={subject}
+      />
+    );
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-8 p-4">
-      <h1 className="text-2xl font-bold mb-4">{subject} Quiz</h1>
-      <p className="mb-4">{subjectDescription}</p>
-      <QuizQuestion
-        question={quizData.questions[currentQuestion]}
-        onAnswer={handleAnswer}
-        currentQuestion={currentQuestion}
-        totalQuestions={quizData.questions.length}
-        onNextQuestion={handleNextQuestion}
-        onPreviousQuestion={handlePreviousQuestion}
-        selectedAnswer={userAnswers[currentQuestion]}
-        onFinish={handleFinish}
-      />
-    </div>
+    <QuizQuestion
+      question={quizData.questions[currentQuestion]}
+      onAnswer={handleAnswer}
+      currentQuestion={currentQuestion}
+      totalQuestions={quizData.questions.length}
+      onNextQuestion={handleNextQuestion}
+      onPreviousQuestion={handlePreviousQuestion}
+      selectedAnswer={userAnswers[currentQuestion]}
+      onFinish={handleFinish}
+    />
   );
 }
 
