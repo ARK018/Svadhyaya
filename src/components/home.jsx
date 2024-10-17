@@ -10,8 +10,19 @@ import {
 } from "@/components/ui/card";
 import { BookOpen, Brain, Award, ArrowRight } from "lucide-react";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleSignup = () => {
+    navigate("/signup");
+  };
+
+  const handleSignin = () => {
+    navigate("/signin");
+  };
+
   return (
     <div>
       <Navbar />
@@ -29,7 +40,10 @@ const Home = () => {
                   Your personalized platform for mastering engineering <br />
                   subjects through quizzes tailored to your syllabus.
                 </p>
-                <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                <button
+                  onClick={handleSignin}
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                >
                   Get Started
                 </button>
               </div>
@@ -93,7 +107,7 @@ const Home = () => {
             <p className="text-xl mb-8">
               Join Svadhyaya today and start acing your exams!
             </p>
-            <Button size="lg">
+            <Button onClick={handleSignup} size="lg">
               Sign Up Now
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>

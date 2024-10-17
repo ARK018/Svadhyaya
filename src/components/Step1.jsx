@@ -23,7 +23,7 @@ const Step1 = ({
         <h1
           onClick={handleHomeClick}
           id="logo"
-          className=" uppercase text-base font-bold leading-6 tracking-[5%] text-black cursor-pointer;"
+          className=" uppercase text-base font-bold leading-6 tracking-[5%] text-black cursor-pointer"
         >
           Svadhyaya
         </h1>
