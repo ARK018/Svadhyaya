@@ -186,10 +186,10 @@ const Dashboard = () => {
           </h3>
           <ul className="px-3">
             <li
-              onClick={() => navigate("/about")}
+              onClick={() => navigate("/")}
               className="p-3 flex items-center justify-between cursor-pointer"
             >
-              About
+              Home
               <img src="/arrow-top-right.svg" alt="arrow" />
             </li>
             <li

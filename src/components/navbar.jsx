@@ -42,7 +42,7 @@ const Navbar = () => {
     signOut(auth)
       .then(() => {
         setUser(null);
-        navigate("/signin");
+        navigate("/");
       })
       .catch((error) => {
         console.error("Sign out error", error);
@@ -64,7 +64,7 @@ const Navbar = () => {
         >
           Svadhyaya
         </h1>
-        <div className="flex gap-9">
+        <div className="flex gap-8">
           {user ? (
             <a
               onClick={() => navigate("/dashboard")}
@@ -75,8 +75,8 @@ const Navbar = () => {
           ) : (
             ""
           )}
-          <a onClick={() => navigate("/about")} className="cursor-pointer">
-            About
+          <a onClick={() => navigate("/")} className="cursor-pointer">
+            Home
           </a>
           <a onClick={() => navigate("/contact")} className="cursor-pointer">
             Contact Us
@@ -133,7 +133,12 @@ const Navbar = () => {
           </DialogContent>
         </Dialog>
       ) : (
-        <Button onClick={handleSignin}>Sign In</Button>
+        <button
+          onClick={handleSignin}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-[6px] px-4 rounded-lg transition duration-300"
+        >
+          Sign In
+        </button>
       )}
     </div>
   );
