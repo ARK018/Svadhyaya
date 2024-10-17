@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function QuizQuestion({
   question,
@@ -13,6 +13,30 @@ export default function QuizQuestion({
 }) {
   const [progress, setProgress] = useState(0);
   const [selectedOption, setSelectedOption] = useState(selectedAnswer);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // This runs whenever the route changes (i.e., location changes)
+    const clearCacheAndLocalStorage = () => {
+      // Clear localStorage
+      localStorage.clear();
+
+      // Clear browser cache if supported
+      if ("caches" in window) {
+        caches.keys().then((names) => {
+          names.forEach((name) => {
+            caches.delete(name);
+          });
+        });
+      }
+
+      console.log("Cache and localStorage cleared on route change");
+    };
+
+    clearCacheAndLocalStorage(); // Clear immediately when component loads
+  }, [location]); // Runs the effect whenever location (i.e., URL) changes
 
   useEffect(() => {
     setSelectedOption(selectedAnswer);
@@ -58,6 +82,11 @@ export default function QuizQuestion({
     }
   };
 
+  const handleClose = () => {
+    localStorage.clear(); // Clear localStorage on button click
+    navigate("/dashboard"); // Navigate to the dashboard
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-lg w-full h-[100vh]">
       <div className="p-4 border-b border-gray-200">
@@ -65,7 +94,10 @@ export default function QuizQuestion({
           <span className="font-semibold text-gray-700">
             {`Question ${currentQuestion + 1} of ${totalQuestions}`}
           </span>
-          <button className="text-gray-500 hover:text-gray-700">
+          <button
+            onClick={handleClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"

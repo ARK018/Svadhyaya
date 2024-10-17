@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { Button } from "@/components/ui/button";
 import {
@@ -205,8 +204,8 @@ const Dashboard = () => {
         <div className="h-16 px-6 py-4 flex justify-between items-center border-t">
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Avatar className="cursor-pointer w-8 h-8">
-                <AvatarImage src="/girl.png" />
+              <Avatar className="cursor-pointer w-8 h-8 text-black/50">
+                <AvatarImage src="/profile.svg" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </DialogTrigger>
@@ -312,7 +311,7 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 pt-10 pb-8 my-2 mr-2 bg-white rounded-lg">
+      <div className="flex-1 pt-10 pb-8 my-2 mr-2 bg-white rounded-lg overflow-y-auto">
         <div className="max-w-[760px] w-full mx-auto">
           {selectedSubject && (
             <div>

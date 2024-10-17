@@ -106,6 +106,18 @@ const Step2 = ({
 
           <div className=" w-[440px] flex flex-col items-center gap-4 mt-10">
             <button
+              type="submit"
+              onClick={submitForm}
+              className=" bg-black text-white w-full hover:bg-gray-800 py-3 px-4 rounded-full transition duration-300"
+            >
+              Sign Up
+            </button>
+
+            <div className="text-center">
+              <span className="text-sm text-gray-500">OR</span>
+            </div>
+
+            <button
               onClick={handleSignupWithGoogle}
               className="border-[1.5px] w-full border-black text-black py-3 px-4 rounded-full hover:bg-gray-50 transition duration-300 flex items-center justify-center"
             >
@@ -115,18 +127,6 @@ const Step2 = ({
                 className="mr-2 h-5 w-5"
               />
               Sign Up with Google
-            </button>
-
-            <div className="text-center">
-              <span className="text-sm text-gray-500">OR</span>
-            </div>
-
-            <button
-              type="submit"
-              onClick={submitForm}
-              className=" bg-black text-white w-full hover:bg-gray-800 py-3 px-4 rounded-full transition duration-300"
-            >
-              Sign Up
             </button>
           </div>
         </div>
