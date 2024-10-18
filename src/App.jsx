@@ -14,6 +14,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { Navigate } from "react-router-dom";
 import Quiz from "./components/Quiz.jsx";
 import Result from "./components/Result.jsx";
+import SkeletonCard from "./components/SkeletonCard.jsx";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -29,7 +30,11 @@ function App() {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>; // Show a loader while checking authentication
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <SkeletonCard />
+      </div> // Show a loader while checking authentication
+    );
   }
   return (
     <>
