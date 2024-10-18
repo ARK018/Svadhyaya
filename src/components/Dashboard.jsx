@@ -155,8 +155,14 @@ const Dashboard = () => {
             className="flex items-center pt-6 pl-6 mb-10 cursor-pointer"
             onClick={handleHomeClick}
           >
-            <div className="w-6 h-6 bg-purple-600 rounded-full mr-2"></div>
-            <span className="text-lg font-semibold">Svadhyaya</span>
+            <img
+              src="/logo.svg"
+              alt="Svadhyaya logo"
+              className="mr-2 h-6 w-6"
+            />
+            <span className="uppercase text-base font-bold leading-6 tracking-[5%] text-black cursor-pointer">
+              Svadhyaya
+            </span>
           </div>
           <h2 className="text-2xl pl-6 font-semibold mb-10">
             {getGreeting()} <br /> {userData.firstName}

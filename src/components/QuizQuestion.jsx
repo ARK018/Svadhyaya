@@ -10,50 +10,72 @@ export default function QuizQuestion({
   onPreviousQuestion,
   selectedAnswer,
   onFinish,
+  time, // Total time in minutes
 }) {
   const [progress, setProgress] = useState(0);
   const [selectedOption, setSelectedOption] = useState(selectedAnswer);
-
+  const [elapsedTime, setElapsedTime] = useState(0); // Track elapsed time in seconds
   const navigate = useNavigate();
   const location = useLocation();
 
+  const totalTimeInSeconds = time * 60; // Convert minutes to seconds
+  console.log(typeof time);
   useEffect(() => {
-    // This runs whenever the route changes (i.e., location changes)
+    // Clear localStorage and cache on route change
     const clearCacheAndLocalStorage = () => {
-      // Clear localStorage
       localStorage.clear();
-
-      // Clear browser cache if supported
       if ("caches" in window) {
         caches.keys().then((names) => {
-          names.forEach((name) => {
-            caches.delete(name);
-          });
+          names.forEach((name) => caches.delete(name));
         });
       }
-
       console.log("Cache and localStorage cleared on route change");
     };
 
     clearCacheAndLocalStorage(); // Clear immediately when component loads
-  }, [location]); // Runs the effect whenever location (i.e., URL) changes
+  }, [location]);
 
   useEffect(() => {
     setSelectedOption(selectedAnswer);
   }, [selectedAnswer]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((oldProgress) => {
-        if (oldProgress === 100) {
-          clearInterval(interval);
-          return 100;
+    // Timer for elapsed time and progress
+    const timerInterval = setInterval(() => {
+      setElapsedTime((prevElapsedTime) => {
+        if (prevElapsedTime < totalTimeInSeconds) {
+          return prevElapsedTime + 1;
         }
-        return oldProgress + 100 / (5 * 60); // 5 minutes in seconds
+        clearInterval(timerInterval);
+        return totalTimeInSeconds;
       });
-    }, 1000); // Update every second
-    return () => clearInterval(interval);
-  }, []);
+    }, 1000);
+
+    return () => clearInterval(timerInterval);
+  }, [totalTimeInSeconds]);
+
+  useEffect(() => {
+    // Auto navigate on time expiry
+    if (elapsedTime === totalTimeInSeconds) {
+      if (currentQuestion === totalQuestions - 1) {
+        onFinish();
+      } else {
+        onNextQuestion();
+      }
+    }
+  }, [
+    elapsedTime,
+    currentQuestion,
+    totalQuestions,
+    totalTimeInSeconds,
+    onFinish,
+    onNextQuestion,
+  ]);
+
+  useEffect(() => {
+    // Update progress based on elapsed time
+    setProgress((elapsedTime / totalTimeInSeconds) * 100);
+  }, [elapsedTime, totalTimeInSeconds]);
 
   useEffect(() => {
     // Load selected option from local storage when component mounts
@@ -63,11 +85,15 @@ export default function QuizQuestion({
     }
   }, [currentQuestion]);
 
+  useEffect(() => {
+    // Store progress in local storage to retain on refresh or navigation
+    localStorage.setItem("quiz_progress", progress.toString());
+  }, [progress]);
+
   const handleOptionSelect = (index) => {
     setSelectedOption(index);
     onAnswer(currentQuestion, index);
-    // Save the selected option to local storage
-    localStorage.setItem(`question_${currentQuestion}`, index);
+    localStorage.setItem(`question_${currentQuestion}`, index.toString());
   };
 
   const handleNextClick = () => {
@@ -85,6 +111,15 @@ export default function QuizQuestion({
   const handleClose = () => {
     localStorage.clear(); // Clear localStorage on button click
     navigate("/dashboard"); // Navigate to the dashboard
+  };
+
+  // Formatting time (seconds to MM:SS format)
+  const formatTime = (totalSeconds) => {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes < 10 ? "0" : ""}${minutes}:${
+      seconds < 10 ? "0" : ""
+    }${seconds}`;
   };
 
   return (
@@ -115,14 +150,16 @@ export default function QuizQuestion({
           </button>
         </div>
         <div className="flex justify-between items-center text-sm text-gray-500">
-          <span>4:19</span>
+          <span>{formatTime(elapsedTime)}</span>{" "}
+          {/* Time counting up from 00:00 */}
           <div className="w-full mx-4 h-2 bg-gray-200 rounded-full">
             <div
-              className="h-full bg-green-500 rounded-full transition-all duration-1000 ease-linear"
+              className="h-full w-full bg-green-500 rounded-full transition-all duration-1000 ease-linear"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
-          <span>15:00</span>
+          <span>{formatTime(totalTimeInSeconds)}</span>{" "}
+          {/* Total fetched time (static) */}
         </div>
       </div>
       <div className="flex flex-col items-center justify-center h-[calc(100vh-84.4px)]">

@@ -17,13 +17,13 @@ function QuizSettings({ onStartQuiz }) {
     let timeLimit = "";
     switch (selectedQuestions) {
       case "05":
-        timeLimit = "05 minutes";
+        timeLimit = "05";
         break;
       case "10":
-        timeLimit = "10 minutes";
+        timeLimit = "10";
         break;
       case "20":
-        timeLimit = "20 minutes";
+        timeLimit = "20";
         break;
       default:
         timeLimit = "";
@@ -32,9 +32,9 @@ function QuizSettings({ onStartQuiz }) {
   };
 
   const handleStartQuiz = () => {
-    if (questions && difficulty) {
+    if (questions && difficulty && time) {
       if (typeof onStartQuiz === "function") {
-        onStartQuiz(questions, difficulty);
+        onStartQuiz(questions, difficulty, time);
       } else {
         console.error("onStartQuiz is not a function");
         alert("Unable to start quiz. Please try again later.");
@@ -83,7 +83,9 @@ function QuizSettings({ onStartQuiz }) {
                   {/* Add more options if needed */}
                 </select>
               </div>
-              {questions && <p className="mt-2 text-gray-700">Time: {time}</p>}
+              {questions && (
+                <p className="mt-2 text-gray-700">Time: {time} minutes</p>
+              )}
             </div>
           </div>
         </div>

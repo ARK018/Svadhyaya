@@ -2,16 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import QuizQuestion from "./QuizQuestion";
 import QuizResult from "./QuizResult";
+import QuizSettings from "./QuizSettings";
 
 function Quiz() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { quizData, subject, subjectDescription } = location.state || {};
+  const { quizData, subject, subjectDescription, time } = location.state || {};
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [userAnswers, setUserAnswers] = useState(
     Array(quizData?.questions.length).fill(null)
   );
   const [quizComplete, setQuizComplete] = useState(false);
+
+  console.log("inside quiz>>>", time);
 
   useEffect(() => {
     if (!quizData) {
@@ -65,6 +68,7 @@ function Quiz() {
       onPreviousQuestion={handlePreviousQuestion}
       selectedAnswer={userAnswers[currentQuestion]}
       onFinish={handleFinish}
+      time={time}
     />
   );
 }

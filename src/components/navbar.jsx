@@ -57,14 +57,19 @@ const Navbar = () => {
   return (
     <div className="h-16 py-5 px-[100px] w-full flex items-center justify-between border-b-2">
       <div className="flex gap-16 items-center">
-        <h1
+        <div
+          className="flex items-center pl-6 cursor-pointer"
           onClick={handleHomeClick}
-          id="logo"
-          className="uppercase text-base font-bold leading-6 tracking-[5%] text-black cursor-pointer"
         >
-          Svadhyaya
-        </h1>
+          <img src="/logo.svg" alt="Svadhyaya logo" className="mr-2 h-6 w-6" />
+          <span className="uppercase text-base font-bold leading-6 tracking-[5%] text-black cursor-pointer">
+            Svadhyaya
+          </span>
+        </div>
         <div className="flex gap-8">
+          <a onClick={() => navigate("/")} className="cursor-pointer">
+            Home
+          </a>
           {user ? (
             <a
               onClick={() => navigate("/dashboard")}
@@ -75,9 +80,6 @@ const Navbar = () => {
           ) : (
             ""
           )}
-          <a onClick={() => navigate("/")} className="cursor-pointer">
-            Home
-          </a>
           <a onClick={() => navigate("/contact")} className="cursor-pointer">
             Contact Us
           </a>

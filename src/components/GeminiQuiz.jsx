@@ -10,9 +10,9 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 function GeminiQuiz({ subject, subjectDescription, subjectSyllabus }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
-  const generateQuiz = async (questions, difficulty) => {
+  const generateQuiz = async (questions, difficulty, time) => {
     setLoading(true);
+    console.log("Time passed:", time);
     const prompt = `Generate a JSON object for a multiple-choice quiz about ${subject}.
     Subject description: ${subjectDescription}
     Subject syllanus: ${subjectSyllabus}
@@ -45,6 +45,7 @@ function GeminiQuiz({ subject, subjectDescription, subjectSyllabus }) {
           subjectDescription,
           questions,
           difficulty,
+          time, // Ensure time is passed as an integer
         },
       });
     } catch (error) {
