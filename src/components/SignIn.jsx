@@ -51,8 +51,8 @@ const SignIn = () => {
       if (!userDoc.exists()) {
         // If user doesn't exist, create a new document
         await setDoc(userDocRef, {
-          firstName: user.displayName.split(" ")[0], // Assuming the first word is the first name
-          lastName: user.displayName.split(" ")[1] || "", // Assuming the second word is the last name (may be empty)
+          firstName: user.displayName.split(" ")[0],
+          lastName: user.displayName.split(" ")[1] || "",
           email: user.email,
           uid: user.uid,
           password: "", // Google users won't have a password, so leave this empty

@@ -45,7 +45,7 @@ function GeminiQuiz({ subject, subjectDescription, subjectSyllabus }) {
           subjectDescription,
           questions,
           difficulty,
-          time, // Ensure time is passed as an integer
+          time,
         },
       });
     } catch (error) {
