@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Step1 = ({
@@ -8,6 +8,7 @@ const Step1 = ({
   handleSignupWithGoogle,
 }) => {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
   const handleHomeClick = () => {
     navigate("/");
@@ -17,13 +18,31 @@ const Step1 = ({
     navigate("/signin");
   };
 
+  const handleNextStep = (e) => {
+    e.preventDefault();
+    setErrorMessage(""); // Clear previous error messages
+
+    // Email validation
+    if (!validateEmail(formData.email)) {
+      setErrorMessage("Please enter a valid email address.");
+      return;
+    }
+
+    nextStep(); // Proceed to the next step if validation passes
+  };
+
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email format regex
+    return regex.test(email);
+  };
+
   return (
     <>
       <div className="h-16 py-5 px-[100px] w-full flex items-center justify-between border-b-2">
         <h1
           onClick={handleHomeClick}
           id="logo"
-          className=" uppercase text-base font-bold leading-6 tracking-[5%] text-black cursor-pointer"
+          className="uppercase text-base font-bold leading-6 tracking-[5%] text-black cursor-pointer"
         >
           Svadhyaya
         </h1>
@@ -38,13 +57,13 @@ const Step1 = ({
         </div>
       </div>
 
-      {/*Sign In section*/}
+      {/* Sign Up section */}
       <div className="relative grid grid-cols-2 items-center justify-center h-[calc(100vh-64px)]">
         <div className="relative aspect-[2/1] w-full">
           <img
             src="/girl.png"
             alt="Woman working on laptop"
-            className="absolute  h-100% object-cover "
+            className="absolute h-100% object-cover"
           />
         </div>
         <div className="flex flex-col justify-center items-center ">
@@ -102,14 +121,17 @@ const Step1 = ({
                 onChange={handleChange}
                 required
               />
+              {errorMessage && (
+                <div className="text-red-600 text-sm">{errorMessage}</div>
+              )}
             </div>
           </form>
 
-          <div className=" w-[440px] flex flex-col items-center gap-4 mt-10">
+          <div className="w-[440px] flex flex-col items-center gap-4 mt-10">
             <button
               type="submit"
-              onClick={nextStep}
-              className=" bg-black text-white w-full hover:bg-gray-800 py-3 px-4 rounded-full transition duration-300"
+              onClick={handleNextStep}
+              className="bg-black text-white w-full hover:bg-gray-800 py-3 px-4 rounded-full transition duration-300"
             >
               Next Step
             </button>

@@ -15,11 +15,11 @@ function GeminiQuiz({ subject, subjectDescription, subjectSyllabus }) {
     console.log("Time passed:", time);
     const prompt = `Generate a JSON object for a multiple-choice quiz about ${subject}.
     Subject description: ${subjectDescription}
-    Subject syllanus: ${subjectSyllabus}
+    Subject syllabus: ${subjectSyllabus}
     Number of questions: ${questions}
-    Difficulty: ${difficulty}
-   
-    The JSON should have this structure with exactly 4 options, each with of maximum of 30 characters :
+    Difficulty level: ${difficulty} (use "Easy" for basic recall questions, "Medium" for questions that require understanding and application, and "Hard" for questions requiring analysis or problem-solving)
+    
+    The JSON should have this structure with exactly 4 options, each a maximum of 30 characters:
     {
       "questions": [
         {
@@ -28,7 +28,13 @@ function GeminiQuiz({ subject, subjectDescription, subjectSyllabus }) {
           "correctAnswer": "Index of correct answer (0-3)"
         }
       ]
-    }`;
+    }
+    
+    For "Easy" difficulty, focus on basic concepts choose randomly from the middle and end of the syllabus. 
+    For "Medium" difficulty, include questions that require some understanding and application.
+    For "Hard" difficulty, design questions that involve analysis, reasoning, or multi-step problem-solving.
+    
+    Ensure that question formats and content vary according to the specified difficulty.`;
 
     try {
       const result = await model.generateContent(prompt);

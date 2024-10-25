@@ -10,6 +10,8 @@ const Step2 = ({
   handleSignupWithGoogle,
 }) => {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   const handleHomeClick = () => {
     navigate("/");
@@ -19,7 +21,26 @@ const Step2 = ({
     navigate("/signin");
   };
 
-  const [showPassword, setShowPassword] = useState(false);
+  const validatePasswords = () => {
+    const { password, confirmPassword } = formData;
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return false;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return false;
+    }
+    setError("");
+    return true;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevent default form submission
+    if (validatePasswords()) {
+      submitForm(); // Call the submit function if validation passes
+    }
+  };
 
   return (
     <>
@@ -52,7 +73,10 @@ const Step2 = ({
           />
         </div>
         <div className="flex flex-col justify-center items-center ">
-          <form className="space-y-10 flex flex-col justify-center items-center w-[440px]">
+          <form
+            className="space-y-10 flex flex-col justify-center items-center w-[440px]"
+            onSubmit={handleSubmit}
+          >
             <div className="relative w-full">
               <label
                 htmlFor="password"
@@ -83,7 +107,7 @@ const Step2 = ({
                 htmlFor="confirmPassword"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Password
+                Confirm Password
               </label>
               <input
                 type={showPassword ? "text" : "password"}
@@ -104,11 +128,14 @@ const Step2 = ({
             </div>
           </form>
 
-          <div className=" w-[440px] flex flex-col items-center gap-4 mt-10">
+          {/* Error Message */}
+          {error && <p className="text-red-500 mt-2">{error}</p>}
+
+          <div className="w-[440px] flex flex-col items-center gap-4 mt-10">
             <button
               type="submit"
-              onClick={submitForm}
-              className=" bg-black text-white w-full hover:bg-gray-800 py-3 px-4 rounded-full transition duration-300"
+              onClick={handleSubmit}
+              className="bg-black text-white w-full hover:bg-gray-800 py-3 px-4 rounded-full transition duration-300"
             >
               Sign Up
             </button>

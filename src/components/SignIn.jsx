@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
@@ -14,6 +13,7 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
   const navigate = useNavigate();
 
@@ -27,12 +27,27 @@ const SignIn = () => {
 
   const handleSigninwithemail = async (e) => {
     e.preventDefault();
+
+    // Clear previous error message
+    setErrorMessage("");
+
+    // Validation
+    if (!validateEmail(email)) {
+      setErrorMessage("Please enter a valid email address.");
+      return;
+    }
+    if (password.length < 6) {
+      setErrorMessage("Password must be at least 6 characters long.");
+      return;
+    }
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/dashboard");
-      console.log("user logged in successfully");
+      console.log("User logged in successfully");
     } catch (error) {
       console.log(error);
+      setErrorMessage("Error signing in. Please check your credentials.");
     }
   };
 
@@ -69,7 +84,13 @@ const SignIn = () => {
       navigate("/dashboard");
     } catch (error) {
       console.log(error);
+      setErrorMessage("Error signing in with Google.");
     }
+  };
+
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email format regex
+    return regex.test(email);
   };
 
   return (
@@ -78,7 +99,7 @@ const SignIn = () => {
         <h1
           onClick={handleHomeClick}
           id="logo"
-          className=" uppercase text-base font-bold leading-6 tracking-[5%] text-black cursor-pointer"
+          className="uppercase text-base font-bold leading-6 tracking-[5%] text-black cursor-pointer"
         >
           Svadhyaya
         </h1>
@@ -93,13 +114,13 @@ const SignIn = () => {
         </div>
       </div>
 
-      {/*Sign In section*/}
+      {/* Sign In section */}
       <div className="relative grid grid-cols-2 items-center justify-center h-[calc(100vh-64px)]">
         <div className="relative aspect-[2/1] w-full">
           <img
             src="/girl.png"
             alt="Woman working on laptop"
-            className="absolute  h-100% object-cover "
+            className="absolute h-100% object-cover"
           />
         </div>
         <div className="flex flex-col justify-center items-center ">
@@ -145,6 +166,9 @@ const SignIn = () => {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
+            {errorMessage && (
+              <div className="text-red-600 text-sm">{errorMessage}</div>
+            )}
             <button
               type="submit"
               onClick={handleSigninwithemail}
@@ -154,7 +178,7 @@ const SignIn = () => {
             </button>
           </form>
 
-          <div className="w-[400px] h-full mt-6 flex flex-col justify-center items-center  text-center">
+          <div className="w-[400px] h-full mt-6 flex flex-col justify-center items-center text-center">
             <div className="flex justify-center items-center gap-[12px]">
               <img className="w-[180px]" src="/line.svg" />
               <span className="text-[11px] text-gray-500">OR</span>
